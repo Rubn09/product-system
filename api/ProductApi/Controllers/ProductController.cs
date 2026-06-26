@@ -1,3 +1,10 @@
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using ProductApi.Data;
+using ProductApi.Models;
+
+namespace ProductApi.Controllers;
+
 [ApiController]
 [Route("api/[controller]")]
 public class ProductsController : ControllerBase
@@ -9,17 +16,65 @@ public class ProductsController : ControllerBase
         _context = context;
     }
 
+    // GET: api/products
     [HttpGet]
-    public IActionResult GetAll()
+    public async Task<IActionResult> GetAll()
     {
-        return Ok(_context.Products.ToList());
+        var products = await _context.Products.ToListAsync();
+        return Ok(products);
     }
 
+    // GET: api/products/1
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetById(int id)
+    {
+        var product = await _context.Products.FindAsync(id);
+
+        if (product == null)
+            return NotFound();
+
+        return Ok(product);
+    }
+
+    // POST: api/products
     [HttpPost]
-    public IActionResult Create(Product product)
+    public async Task<IActionResult> Create(Product product)
     {
         _context.Products.Add(product);
-        _context.SaveChanges();
-        return Ok(product);
+        await _context.SaveChangesAsync();
+
+        return CreatedAtAction(nameof(GetById), new { id = product.Id }, product);
+    }
+
+    // PUT: api/products/1
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Update(int id, Product updatedProduct)
+    {
+        var product = await _context.Products.FindAsync(id);
+
+        if (product == null)
+            return NotFound();
+
+        product.Name = updatedProduct.Name;
+        product.Price = updatedProduct.Price;
+
+        await _context.SaveChangesAsync();
+
+        return NoContent();
+    }
+
+    // DELETE: api/products/1
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var product = await _context.Products.FindAsync(id);
+
+        if (product == null)
+            return NotFound();
+
+        _context.Products.Remove(product);
+        await _context.SaveChangesAsync();
+
+        return NoContent();
     }
 }
