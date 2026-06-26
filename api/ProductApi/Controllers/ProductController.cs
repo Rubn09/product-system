@@ -1,79 +1,25 @@
-using Microsoft.AspNetCore.Mvc;
-using ProductApi.Models;
-
-namespace ProductApi.Controllers;
-
 [ApiController]
-[Route("api/products")]
+[Route("api/[controller]")]
 public class ProductsController : ControllerBase
 {
-    private static readonly List<Product> _products = new();
-    private static int _nextId = 1;
+    private readonly AppDbContext _context;
 
-    // GET: api/products
-    [HttpGet]
-    public ActionResult<List<Product>> GetAll()
+    public ProductsController(AppDbContext context)
     {
-        return Ok(_products);
+        _context = context;
     }
 
-    [HttpGet("{id}")]
-    public ActionResult<Product> GetById(int id)
+    [HttpGet]
+    public IActionResult GetAll()
     {
-        var product = _products.FirstOrDefault(p => p.Id == id);
-
-        if (product == null)
-            return NotFound(new { message = "Product not found" });
-
-        return Ok(product);
+        return Ok(_context.Products.ToList());
     }
 
     [HttpPost]
-    public ActionResult<Product> Create(Product product)
+    public IActionResult Create(Product product)
     {
-        // validação simples
-        if (string.IsNullOrWhiteSpace(product.Name))
-            return BadRequest(new { message = "Name is required" });
-
-        if (product.Price <= 0)
-            return BadRequest(new { message = "Price must be greater than 0" });
-
-        product.Id = _nextId++;
-        _products.Add(product);
-
-        return CreatedAtAction(nameof(GetById), new { id = product.Id }, product);
-    }
-
-    [HttpPut("{id}")]
-    public IActionResult Update(int id, Product updatedProduct)
-    {
-        var product = _products.FirstOrDefault(p => p.Id == id);
-
-        if (product == null)
-            return NotFound(new { message = "Product not found" });
-
-        if (string.IsNullOrWhiteSpace(updatedProduct.Name))
-            return BadRequest(new { message = "Name is required" });
-
-        if (updatedProduct.Price <= 0)
-            return BadRequest(new { message = "Price must be greater than 0" });
-
-        product.Name = updatedProduct.Name;
-        product.Price = updatedProduct.Price;
-
-        return NoContent();
-    }
-
-    [HttpDelete("{id}")]
-    public IActionResult Delete(int id)
-    {
-        var product = _products.FirstOrDefault(p => p.Id == id);
-
-        if (product == null)
-            return NotFound(new { message = "Product not found" });
-
-        _products.Remove(product);
-
-        return NoContent();
+        _context.Products.Add(product);
+        _context.SaveChanges();
+        return Ok(product);
     }
 }
