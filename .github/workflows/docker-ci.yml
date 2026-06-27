@@ -24,17 +24,14 @@ jobs:
       - name: Build project
         run: dotnet build ./api/ProductApi/ProductApi.csproj --no-restore
 
-      - name: Run tests (if any)
-        run: echo "No tests yet"
-
       - name: Build Docker image
         run: docker build -t product-api:ci ./api/ProductApi
 
       - name: Login to GitHub Container Registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
-      - name: Build Docker image
-        run: docker build -t ghcr.io/${{ github.repository }}/product-api:latest ./api/ProductApi
+      - name: Build & Tag Docker image
+        run: docker build -t ghcr.io/rubn09/product-system/product-api:latest ./api/ProductApi
 
       - name: Push Docker image
-        run: docker push ghcr.io/${{ github.repository }}/product-api:latest
+        run: docker push ghcr.io/rubn09/product-system/product-api:latest
