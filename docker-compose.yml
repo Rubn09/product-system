@@ -1,0 +1,32 @@
+version: '3.9'
+
+services:
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlserver
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=YourStrong123!
+    ports:
+      - "1433:1433"
+    networks:
+      - product-network
+
+  api:
+    build:
+      context: ./api/ProductApi
+      dockerfile: Dockerfile
+    container_name: product-api
+    ports:
+      - "8080:8080"
+    depends_on:
+      - sqlserver
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Server=sqlserver,1433;Database=ProductDb;User Id=sa;Password=YourStrong123!;TrustServerCertificate=True
+    networks:
+      - product-network
+
+networks:
+  product-network:
