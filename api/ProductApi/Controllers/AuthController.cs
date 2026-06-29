@@ -10,10 +10,17 @@ namespace ProductApi.Controllers;
 [Route("api/[controller]")]
 public class AuthController : ControllerBase
 {
+    private readonly IConfiguration _config;
+
+    public AuthController(IConfiguration config)
+    {
+        _config = config;
+    }
+
     [HttpPost("login")]
     public IActionResult Login()
     {
-        var key = Encoding.UTF8.GetBytes("SUPER_SECRET_KEY_123456789");
+        var key = Encoding.UTF8.GetBytes(_config["Jwt:Key"]);
 
         var tokenHandler = new JwtSecurityTokenHandler();
 
@@ -23,9 +30,12 @@ public class AuthController : ControllerBase
             {
                 new Claim(ClaimTypes.Name, "admin")
             }),
+
             Expires = DateTime.UtcNow.AddHours(1),
-            Issuer = "ProductApi",
-            Audience = "ProductApi",
+
+            Issuer = _config["Jwt:Issuer"],
+            Audience = _config["Jwt:Audience"],
+
             SigningCredentials = new SigningCredentials(
                 new SymmetricSecurityKey(key),
                 SecurityAlgorithms.HmacSha256Signature)
