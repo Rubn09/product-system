@@ -2,6 +2,7 @@ using ProductApi.Data;
 using Microsoft.EntityFrameworkCore;
 using ProductApi.Middleware;
 using Serilog;
+using ProductApi.Data.Seed;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
