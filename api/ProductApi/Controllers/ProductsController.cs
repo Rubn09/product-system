@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProductApi.Data;
 using ProductApi.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ProductApi.Controllers;
 
@@ -18,6 +19,7 @@ public class ProductsController : ControllerBase
 
     // GET: api/products
     [HttpGet]
+    [Authorize]
     public async Task<IActionResult> GetAll()
     {
         var products = await _context.Products.ToListAsync();
@@ -26,6 +28,7 @@ public class ProductsController : ControllerBase
 
     // GET: api/products/1
     [HttpGet("{id}")]
+    [Authorize]
     public async Task<IActionResult> GetById(int id)
     {
         var product = await _context.Products.FindAsync(id);
@@ -38,6 +41,7 @@ public class ProductsController : ControllerBase
 
     // POST: api/products
     [HttpPost]
+    [Authorize]
     public async Task<IActionResult> Create(Product product)
     {
         _context.Products.Add(product);
@@ -48,6 +52,7 @@ public class ProductsController : ControllerBase
 
     // PUT: api/products/1
     [HttpPut("{id}")]
+    [Authorize]
     public async Task<IActionResult> Update(int id, Product updatedProduct)
     {
         var product = await _context.Products.FindAsync(id);
@@ -65,6 +70,7 @@ public class ProductsController : ControllerBase
 
     // DELETE: api/products/1
     [HttpDelete("{id}")]
+    [Authorize]
     public async Task<IActionResult> Delete(int id)
     {
         var product = await _context.Products.FindAsync(id);
