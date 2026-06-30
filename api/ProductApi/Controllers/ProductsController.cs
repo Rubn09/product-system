@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using ProductApi.Data;
 using ProductApi.Models;
 using Microsoft.AspNetCore.Authorization;
+using ProductApi.Services;
 
 namespace ProductApi.Controllers;
 
