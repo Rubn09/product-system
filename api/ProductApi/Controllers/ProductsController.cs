@@ -74,20 +74,3 @@ public class ProductsController : ControllerBase
         return NoContent();
     }
 }
-    // DELETE: api/products/1
-    [HttpDelete("{id}")]
-    [Authorize]
-    public async Task<IActionResult> Delete(int id)
-    {
-        var product = await _productService.GetByIdAsync(id);
-
-        if (product == null)
-            return NotFound();
-
-        await _productService.DeleteAsync(id);
-
-        await _context.SaveChangesAsync();
-
-        return NoContent();
-    }
-}
