@@ -28,6 +28,9 @@ jobs:
       - name: Build project
         run: dotnet build ./api/ProductApi/ProductApi.csproj --no-restore
 
+      - name: Run tests
+        run: dotnet test ./ProductApi.Tests/ProductApi.Tests.csproj --no-build --verbosity normal
+
       - name: Build Docker image
         run: docker build -t product-api:ci ./api/ProductApi
 
